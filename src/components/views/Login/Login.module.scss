@@ -1,4 +1,4 @@
-.register {
+.login{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -50,9 +50,10 @@
             padding: 6px;
             &:hover {
                 border: none;
-                background-color: #0000003f;
+                background-color: #222324;
                 color: #FFF;
                 cursor: pointer;
+                transition: all .2s ease;
             }
         img {
             width: 100%;

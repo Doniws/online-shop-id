@@ -6,7 +6,7 @@ import {
   collection,
   query,
   where,
-  addDoc,
+  addDoc
 } from "firebase/firestore";
 import app from "./init";
 import bcrypt from "bcrypt";
@@ -32,11 +32,11 @@ export async function retrieveDataById(collectionName: string, id: string) {
 }
 
 // Fungsi untuk mengambil data berdasarkan nama (dengan asumsi nama unik)
-export async function retrieveDataByName(collectionName: string, name: string) {
-  const snapshot = await getDoc(doc(firestore, collectionName, name));
-  const data = snapshot.data();
-  return data;
-}
+// export async function retrieveDataByName(collectionName: string, name: string) {
+//   const snapshot = await getDoc(doc(firestore, collectionName, name));
+//   const data = snapshot.data();
+//   return data;
+// }
 
 // Fungsi untuk mendaftar pengguna
 export async function signUp(userData: {
@@ -51,7 +51,7 @@ export async function signUp(userData: {
   // Periksa email yang ada sebelum melanjutkan pendaftaran
   const snapshot = await getDocs(q);
   if (snapshot.size > 0) {
-    callback(false, "Email sudah terdaftar!"); // Informasikan pemanggil tentang duplikat
+    callback(false, "Email sudah terdaftar!"); 
     return; // Keluar dari fungsi lebih awal untuk mencegah pemrosesan lebih lanjut
   }
 
@@ -66,7 +66,29 @@ export async function signUp(userData: {
     await addDoc(collection(firestore, "users"), userData);
     callback(true);
   } catch (error) {
-    callback(false, error); // Kirim pesan kesalahan ke pemanggil
+    callback(false, error); 
     console.error("Kesalahan saat menambahkan pengguna:", error);
   }
+}
+
+export async function signIn(email: string) {
+
+
+  // Buat query untuk mengambil data pengguna berdasarkan email
+  const q = query(collection(firestore, "users"), where("email", "==", email));
+
+  // Ambil data pengguna dari Firestore
+  const snapshot = await getDocs(q);
+  const data = snapshot.docs.map((doc) => ({ 
+    id: doc.id,
+    ...doc.data(),
+  }));
+  
+  if(data) {
+    return data[0];
+  }else {
+    return null;
+  }
+  
+
 }

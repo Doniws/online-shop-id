@@ -1,8 +1,9 @@
+import LoginView from "@/components/views/Login";
 
-const login = () => {
-  return (
-    <div>login</div>
-  )
-}
+const RegisterPage = () => {
+    return (
+        <LoginView />
+    )
+};
 
-export default login
+export default RegisterPage;

@@ -2,7 +2,7 @@ import styles from "./Register.module.scss";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
 import { useRouter  } from "next/router";
-import { set } from "firebase/database";
+import Link from "next/link";
 
 const RegsiterView = () => {
   const { push } = useRouter();
@@ -15,10 +15,10 @@ const RegsiterView = () => {
     setIsLoading(true);
     setError('');
     const data = {
-      fullname: form.fullname.value,
       email: form.email.value,
       password: form.password.value,
-      phone: form.phone.value,
+      fullname: form.fullname.value,
+      phone: form.phone.value
     };
     const result = await fetch("/api/user", {
       method: "POST",
@@ -74,7 +74,7 @@ const RegsiterView = () => {
           <form onSubmit={handleSubmit} action="" method="post">
             <span>
               <label htmlFor="fullname">Fullname</label>
-              <input name="fullname" type="text" />
+              <input required name="fullname" type="text" />
             </span>
             <span>
               <label htmlFor="phone">Phone</label>
@@ -100,7 +100,7 @@ const RegsiterView = () => {
             </button>
           </form>
         </div>
-        <p>have account ? sign here</p>
+        <p>Have account ? <Link href="/auth/login">Login</Link></p>
       </div>
     </section>
   );

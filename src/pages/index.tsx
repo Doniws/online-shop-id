@@ -1,7 +1,11 @@
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
+import { use } from "react";
 
 export default function Home() {
+  const { data } = useSession();
+  console.log(data);
   return (
     <>
       <Head>

@@ -1,4 +1,4 @@
-import RegsiterView from "../../components/layouts/Registers";
+import RegsiterView from "@/components/views/Registers";
 
 const RegisterPage = () => {
     return (
