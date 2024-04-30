@@ -5,7 +5,6 @@ import Image from "next/image";
 
 export default function Home() {
   const { data } = useSession();
-  console.log(data?.user?.fullname);
   return (
     <>
       <Head>
@@ -16,10 +15,6 @@ export default function Home() {
       </Head>
       <main>
     <p>{data?.user?.email}</p>
-    <p>{data?.user?.fullname}</p>
-    <p>{data?.user?.phone}</p>
-    <p>{data?.user?.role}</p>
-
       </main>
     </>
   );
