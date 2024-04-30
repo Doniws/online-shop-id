@@ -4,6 +4,7 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head />
+      <meta name="google-site-verification" content="G3Zc2nV8TLgAkv1rF6Nwyd3fQCKG6RsyWsH_33TjFgc" />
       <body>
         <Main />
         <NextScript />

@@ -1,11 +1,11 @@
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
-import { use } from "react";
+
 
 export default function Home() {
   const { data } = useSession();
-  console.log(data);
+  console.log(data?.user?.fullname);
   return (
     <>
       <Head>
@@ -15,7 +15,11 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        test
+    <p>{data?.user?.email}</p>
+    <p>{data?.user?.fullname}</p>
+    <p>{data?.user?.phone}</p>
+    <p>{data?.user?.role}</p>
+
       </main>
     </>
   );

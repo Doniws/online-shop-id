@@ -6,7 +6,8 @@ import {
   collection,
   query,
   where,
-  addDoc
+  addDoc,
+  updateDoc,
 } from "firebase/firestore";
 import app from "./init";
 import bcrypt from "bcrypt";
@@ -90,5 +91,46 @@ export async function signIn(email: string) {
     return null;
   }
   
+
+}
+
+export async function updatePassword(userId: string, newPassword: string): Promise<{ success: boolean; message: string }> {
+  const userRef = doc(firestore, "users", userId);
+  const snapshot = await getDoc(userRef);
+
+  if (!snapshot.exists()) {
+    return { success: false, message: "Pengguna tidak ditemukan." };
+  }
+
+  const userData = snapshot.data();
+  console.log(userData);
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  try {
+    await updateDoc(userRef, { password: hashedPassword });
+    return { success: true, message: "Password berhasil diubah." };
+  } catch (error) {
+    console.error("Kesalahan saat mengubah password:", error);
+    return { success: false, message: "Gagal mengubah password." };
+  }
+}
+
+export async function updateEmail(userId: string , newEmail : string ) : Promise<{success : boolean; message : string} >{
+  const userRef = doc(firestore , "users" , userId) ;
+  const snapshot = await getDoc(userRef);
+
+  if(!snapshot.exists()){
+    return {success : false , message : "Pengguna tidak ditemukan"};
+  }
+
+  const userData = snapshot.data();
+  console.log(userData);
+  try {
+    await updateDoc(userRef, {email : newEmail }); 
+    return {success : true , message : "Email berhasil diubah"};
+  } catch(error) {
+    console.error("Kesalahan saat mengubah email:", error);
+    return {success : false , message : "Gagal mengubah email"}
+  }
 
 }
