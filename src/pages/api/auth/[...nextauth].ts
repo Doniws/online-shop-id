@@ -53,11 +53,11 @@ const authOptions: NextAuthOptions = {
             }
             
                 // loginWithGoogle
-            if(account?.provider === "google"){
+            if(account?.provider === 'google'){
                 const data = {
                     fullname : user.name , 
                     email : user.email ,
-                    type : "google"
+                    type : 'google'
                 };
                 await loginWithGoogle(
                     data , (data : any ) => {
