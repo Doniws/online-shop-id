@@ -51,22 +51,22 @@ const LoginView = () => {
           {error && <p>{error}</p>}
         </span>
         <span className={styles.login_icon}>
-          <div className="wrap">
+          <button className="wrap" type="button" onClick={() => signIn('google', { callbackURL, redirect : false })}>
             <Image
               width={20}
               height={20}
               alt="google"
               src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg"
             />
-          </div>
-          <div className="wrap">
+          </button>
+          <button className="wrap">
             <Image
               width={20}
               height={20}
               alt="facebook"
               src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/facebook/facebook-original.svg"
             />
-          </div>
+          </button>
         </span>
         <div className={styles.login_form}>
           <form onSubmit={handleSubmit} action="" method="post">

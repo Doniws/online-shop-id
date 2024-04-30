@@ -40,19 +40,25 @@ export async function retrieveDataById(collectionName: string, id: string) {
 // }
 
 // Fungsi untuk mendaftar pengguna
-export async function signUp(userData: {
-  email: string;
-  password: string;
-  phone: string;
-  fullname: string;
-  role?: string;
-}, callback: Function) {
-  const q = query(collection(firestore, "users"), where("email", "==", userData.email));
+export async function signUp(
+  userData: {
+    email: string;
+    password: string;
+    phone: string;
+    fullname: string;
+    role?: string;
+  },
+  callback: Function
+) {
+  const q = query(
+    collection(firestore, "users"),
+    where("email", "==", userData.email)
+  );
 
   // Periksa email yang ada sebelum melanjutkan pendaftaran
   const snapshot = await getDocs(q);
   if (snapshot.size > 0) {
-    callback(false, "Email sudah terdaftar!"); 
+    callback(false, "Email sudah terdaftar!");
     return; // Keluar dari fungsi lebih awal untuk mencegah pemrosesan lebih lanjut
   }
 
@@ -67,70 +73,47 @@ export async function signUp(userData: {
     await addDoc(collection(firestore, "users"), userData);
     callback(true);
   } catch (error) {
-    callback(false, error); 
+    callback(false, error);
     console.error("Kesalahan saat menambahkan pengguna:", error);
   }
 }
 
 export async function signIn(email: string) {
-
-
   // Buat query untuk mengambil data pengguna berdasarkan email
   const q = query(collection(firestore, "users"), where("email", "==", email));
 
   // Ambil data pengguna dari Firestore
   const snapshot = await getDocs(q);
-  const data = snapshot.docs.map((doc) => ({ 
+  const data = snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
   }));
-  
-  if(data) {
+
+  if (data) {
     return data[0];
-  }else {
+  } else {
     return null;
   }
-  
-
 }
 
-export async function updatePassword(userId: string, newPassword: string): Promise<{ success: boolean; message: string }> {
-  const userRef = doc(firestore, "users", userId);
-  const snapshot = await getDoc(userRef);
+export async function loginWithGoogle(data: any, callback: Function) {
+  const q = query(
+    collection(firestore, "users"),
+    where("email", "==", data.email)
+  );
 
-  if (!snapshot.exists()) {
-    return { success: false, message: "Pengguna tidak ditemukan." };
+  const snapshot = await getDocs(q);
+  const user = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+
+  if (user.length > 0) {
+    callback(user[0]);
+  } else{
+    data.role = 'member' ;
+    await addDoc(collection(firestore , 'users') , data).then(() => {
+      callback(data);
+    });
   }
-
-  const userData = snapshot.data();
-  console.log(userData);
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-  try {
-    await updateDoc(userRef, { password: hashedPassword });
-    return { success: true, message: "Password berhasil diubah." };
-  } catch (error) {
-    console.error("Kesalahan saat mengubah password:", error);
-    return { success: false, message: "Gagal mengubah password." };
-  }
-}
-
-export async function updateEmail(userId: string , newEmail : string ) : Promise<{success : boolean; message : string} >{
-  const userRef = doc(firestore , "users" , userId) ;
-  const snapshot = await getDoc(userRef);
-
-  if(!snapshot.exists()){
-    return {success : false , message : "Pengguna tidak ditemukan"};
-  }
-
-  const userData = snapshot.data();
-  console.log(userData);
-  try {
-    await updateDoc(userRef, {email : newEmail }); 
-    return {success : true , message : "Email berhasil diubah"};
-  } catch(error) {
-    console.error("Kesalahan saat mengubah email:", error);
-    return {success : false , message : "Gagal mengubah email"}
-  }
-
 }

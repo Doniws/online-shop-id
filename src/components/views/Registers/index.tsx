@@ -4,8 +4,11 @@ import { FormEvent, useState } from "react";
 import { useRouter  } from "next/router";
 import Link from "next/link";
 
+import { signIn } from "next-auth/react";
+
 const RegsiterView = () => {
-  const { push } = useRouter();
+  const { push  , query} = useRouter();
+   const callbackURL:any = query.callbackURL || '/';
   const [isLoading , setIsLoading ] = useState(false);
   const [error , setError] = useState('');
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -53,22 +56,22 @@ const RegsiterView = () => {
          {error && <p>{error}</p>}
         </span>
         <span className={styles.register_icon}>
-          <div className="wrap">
+          <button className="wrap" type="button" onClick={() => signIn('google', { callbackURL, redirect : false })}>
             <Image
               width={20}
               height={20}
               alt="google"
               src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg"
             />
-          </div>
-          <div className="wrap">
+          </button>
+          <button className="wrap">
             <Image
               width={20}
               height={20}
               alt="facebook"
               src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/facebook/facebook-original.svg"
             />
-          </div>
+          </button>
         </span>
         <div className={styles.register_form}>
           <form onSubmit={handleSubmit} action="" method="post">

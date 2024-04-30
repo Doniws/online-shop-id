@@ -1,6 +1,8 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { signIn } from "@/lib/firebase/service";
+import GoogleProvider from "next-auth/providers/google";
+
+import { loginWithGoogle, signIn } from "@/lib/firebase/service";
 import { compare } from "bcrypt";
 import NextAuth from "next-auth/next";
 
@@ -35,9 +37,13 @@ const authOptions: NextAuthOptions = {
 
             },
         }),
+        GoogleProvider({
+            clientId: process.env.GOOGLE_OAUTH_CLIENT_ID || '',
+            clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET || '',
+        }),
     ],
     callbacks: {
-        async jwt({ token, account, profile, user }: any) {
+        async jwt({ token, account, profile, user } : any ) {
             if (account?.provider === "credentials") {
                 token.email = user.email;
                 token.fullname = user.fullname;
@@ -45,10 +51,28 @@ const authOptions: NextAuthOptions = {
                 token.role = user.role;
 
             }
+            
+                // loginWithGoogle
+            if(account?.provider === "google"){
+                const data = {
+                    fullname : user.name , 
+                    email : user.email ,
+                    type : "google"
+                };
+                await loginWithGoogle(
+                    data , (data : any ) => {
+                        token.email = data.email;
+                        token.fullname = data.fullname;
+                        token.role = data.role;
+                    }
+                );
+            }
             return token;
         },
+
+
         async session({ session, token }: any) {
-            if("email" in token) {
+            if ("email" in token) {
                 session.user.email = token.email;
             }
             if ("fullname" in token) {
@@ -62,9 +86,12 @@ const authOptions: NextAuthOptions = {
             }
             return session;
         },
+        // menyerdehanakan session
+        
+
     },
-    pages : {
-        signIn: "/auth/login", 
+    pages: {
+        signIn: "/auth/login",
     }
 };
 
