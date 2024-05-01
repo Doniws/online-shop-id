@@ -5,6 +5,7 @@ import Image from "next/image";
 
 export default function Home() {
   const { data } = useSession();
+  console.log(data);
   return (
     <>
       <Head>
@@ -15,6 +16,8 @@ export default function Home() {
       </Head>
       <main>
     <p>{data?.user?.email}</p>
+    <p>{data?.user?.image}</p>
+<Image src={data?.user?.image ?? ''} width={200} height={200} alt="" />
       </main>
     </>
   );

@@ -4,13 +4,21 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 import { set } from "firebase/database";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { signIn , useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 const LoginView = () => {
   const { push , query } = useRouter();
-  const callbackURL:any = query.callbackURL || '/';
+  const callbackUrl:any = query.callbackUrl || '/';
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const { data: session } = useSession();
+   // Redirect if session exists
+  useEffect(() => {
+    if (session) {
+      push(callbackUrl);
+    }
+  }, [session, callbackUrl]);
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
   event.preventDefault();
   setIsLoading(true);
@@ -22,11 +30,11 @@ const LoginView = () => {
       redirect: false,
       email: form.email.value,
       password: form.password.value,
-      callbackUrl: callbackURL
+      callbackUrl: callbackUrl
     });
 
     if (!res?.error) {
-      push(callbackURL);
+      push(callbackUrl);
     } else {
       setIsLoading(false);
       setError("Email or password incorrect");
@@ -51,7 +59,7 @@ const LoginView = () => {
           {error && <p>{error}</p>}
         </span>
         <span className={styles.login_icon}>
-          <button className="wrap" type="button" onClick={() => signIn('google', { callbackURL, redirect : false })}>
+          <button className="wrap" type="button" onClick={() => signIn('google', { callbackUrl, redirect : false })}>
             <Image
               width={20}
               height={20}
@@ -59,7 +67,7 @@ const LoginView = () => {
               src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg"
             />
           </button>
-          <button className="wrap">
+          <button className="wrap" type="button"  onClick={() => signIn('facebook', { callbackUrl, redirect : false })}>
             <Image
               width={20}
               height={20}

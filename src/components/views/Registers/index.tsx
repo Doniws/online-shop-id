@@ -8,7 +8,7 @@ import { signIn } from "next-auth/react";
 
 const RegsiterView = () => {
   const { push  , query} = useRouter();
-   const callbackURL:any = query.callbackURL || '/';
+   const callbackUrl:any = query.callbackUrl || '/';
   const [isLoading , setIsLoading ] = useState(false);
   const [error , setError] = useState('');
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -56,7 +56,7 @@ const RegsiterView = () => {
          {error && <p>{error}</p>}
         </span>
         <span className={styles.register_icon}>
-          <button className="wrap" type="button" onClick={() => signIn('google', { callbackURL, redirect : false })}>
+          <button className="wrap" type="button" onClick={() => signIn('google', { callbackUrl, redirect : false })}>
             <Image
               width={20}
               height={20}

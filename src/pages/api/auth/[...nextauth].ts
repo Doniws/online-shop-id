@@ -1,8 +1,9 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import FacebookProvider from "next-auth/providers/facebook";
 
-import { loginWithGoogle, signIn } from "@/lib/firebase/service";
+import { loginWithFacebook, loginWithGoogle, signIn } from "@/lib/firebase/service";
 import { compare } from "bcrypt";
 import NextAuth from "next-auth/next";
 
@@ -41,9 +42,13 @@ const authOptions: NextAuthOptions = {
             clientId: process.env.GOOGLE_OAUTH_CLIENT_ID || '',
             clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET || '',
         }),
+        FacebookProvider({
+            clientId: process.env.FACEBOOK_OAUTH_CLIENT_ID || '',
+            clientSecret: process.env.FACEBOOK_OAUTH_CLIENT_SECRET || '',
+        })
     ],
     callbacks: {
-        async jwt({ token, account, profile, user } : any ) {
+        async jwt({ token, account, profile, user }: any) {
             if (account?.provider === "credentials") {
                 token.email = user.email;
                 token.fullname = user.fullname;
@@ -51,45 +56,64 @@ const authOptions: NextAuthOptions = {
                 token.role = user.role;
 
             }
-            
-                // loginWithGoogle
-            if(account?.provider === 'google'){
+
+            // loginWithGoogle
+            if (account?.provider === 'google') {
                 const data = {
-                    fullname : user.name , 
-                    email : user.email ,
-                    type : 'google'
+                    fullname: user.name,
+                    email: user.email,
+                    type: 'google'
                 };
                 await loginWithGoogle(
-                    data , (data : any ) => {
+                    data, (data: any) => {
                         token.email = data.email;
                         token.fullname = data.fullname;
                         token.role = data.role;
                     }
                 );
             }
-            return token;
-        },
 
-
-        async session({ session, token }: any) {
-            if ("email" in token) {
-                session.user.email = token.email;
+            //login with facebook 
+            if (account?.provider === 'facebook') {
+                const data = {
+                    fullname: user.name,
+                    email: user.email,
+                    type: 'facebook'
+                };
+                await loginWithFacebook(
+                    data, (data: any) => {
+                        token.email = data.email;
+                        token.fullname = data.fullname;
+                        token.role = data.role;
+                    }
+                );
             }
-            if ("fullname" in token) {
-                session.user.fullname = token.fullname;
-            }
-            if ("phone" in token) {
-                session.user.phone = token.phone;
-            }
-            if ("role" in token) {
-                session.user.role = token.role;
-            }
-            return session;
-        },
-        // menyerdehanakan session
         
 
+            return token;
+
     },
+
+
+    async session({ session, token }: any) {
+        if ("email" in token) {
+            session.user.email = token.email;
+        }
+        if ("fullname" in token) {
+            session.user.fullname = token.fullname;
+        }
+        if ("phone" in token) {
+            session.user.phone = token.phone;
+        }
+        if ("role" in token) {
+            session.user.role = token.role;
+        }
+        return session;
+    },
+    // menyerdehanakan session
+
+
+},
     pages: {
         signIn: "/auth/login",
     }
